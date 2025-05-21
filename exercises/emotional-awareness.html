@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotional Awareness Exercise - MindMatters</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-[#0D1117] text-[#C9D1D9]">
+    <!-- Navigation -->
+    <nav class="bg-[#161B22] p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="../index.html" class="text-[#58A6FF] text-xl font-bold">MindMatters</a>
+            <div class="hidden md:flex space-x-6">
+                <a href="../index.html" class="text-[#C9D1D9] hover:text-[#58A6FF]">Home</a>
+                <a href="../index.html#about" class="text-[#C9D1D9] hover:text-[#58A6FF]">About</a>
+                <a href="../index.html#resources" class="text-[#C9D1D9] hover:text-[#58A6FF]">Resources</a>
+                <a href="../index.html#contact" class="text-[#C9D1D9] hover:text-[#58A6FF]">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12">
+        <div id="quiz-container" class="max-w-3xl mx-auto">
+            <h1 class="text-4xl font-bold text-center mb-8 text-[#58A6FF]">Emotional Awareness Assessment</h1>
+            <p class="text-center mb-12 text-lg">Answer the following questions to assess your emotional awareness level.</p>
+
+            <form id="emotional-awareness-quiz" class="space-y-8">
+                <!-- Questions will be dynamically inserted here -->
+            </form>
+
+            <div class="text-center mt-8">
+                <button type="submit" form="emotional-awareness-quiz" class="bg-[#58A6FF] text-[#0D1117] px-8 py-3 rounded-lg hover:bg-[#238636] hover:text-[#C9D1D9] transition-colors text-lg">
+                    Submit Answers
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Section (Hidden initially) -->
+        <div id="results-container" class="max-w-4xl mx-auto hidden">
+            <h2 class="text-3xl font-bold text-center mb-8 text-[#58A6FF]">Your Results</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <!-- Chart -->
+                <div class="bg-[#161B22] p-6 rounded-lg">
+                    <canvas id="resultsChart"></canvas>
+                </div>
+                
+                <!-- Analysis -->
+                <div class="bg-[#161B22] p-6 rounded-lg">
+                    <h3 class="text-2xl font-bold mb-4 text-[#C9D1D9]">Analysis</h3>
+                    <div id="analysis-text" class="space-y-4">
+                        <!-- Analysis will be inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <a href="../exercises.html" class="inline-block bg-[#58A6FF] text-[#0D1117] px-8 py-3 rounded-lg hover:bg-[#238636] hover:text-[#C9D1D9] transition-colors text-lg">
+                    Back to Exercises
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Quiz Questions
+        const questions = [
+            {
+                question: "How often do you notice changes in your emotional state?",
+                options: ["Rarely", "Sometimes", "Often", "Very Frequently"],
+                category: "Self-Awareness"
+            },
+            {
+                question: "When you feel a strong emotion, how quickly do you identify what triggered it?",
+                options: ["Usually can't identify", "Takes a long time", "Within a few minutes", "Almost immediately"],
+                category: "Emotional Recognition"
+            },
+            {
+                question: "How well do you understand the physical sensations associated with different emotions?",
+                options: ["Not at all", "Somewhat", "Well", "Very well"],
+                category: "Physical Awareness"
+            },
+            {
+                question: "How often do you reflect on your emotional responses to situations?",
+                options: ["Rarely", "Sometimes", "Often", "Very Frequently"],
+                category: "Self-Reflection"
+            },
+            {
+                question: "How comfortable are you discussing your emotions with others?",
+                options: ["Very uncomfortable", "Somewhat uncomfortable", "Comfortable", "Very comfortable"],
+                category: "Emotional Expression"
+            },
+            {
+                question: "How well do you recognize emotions in others?",
+                options: ["Poorly", "Somewhat", "Well", "Very well"],
+                category: "Social Awareness"
+            },
+            {
+                question: "How often do you use emotional awareness to make decisions?",
+                options: ["Rarely", "Sometimes", "Often", "Very Frequently"],
+                category: "Decision Making"
+            },
+            {
+                question: "How well do you manage intense emotions?",
+                options: ["Poorly", "Somewhat", "Well", "Very well"],
+                category: "Emotional Regulation"
+            },
+            {
+                question: "How often do you practice mindfulness or emotional awareness exercises?",
+                options: ["Never", "Rarely", "Sometimes", "Regularly"],
+                category: "Practice"
+            },
+            {
+                question: "How confident are you in your ability to understand your emotions?",
+                options: ["Not confident", "Somewhat confident", "Confident", "Very confident"],
+                category: "Confidence"
+            }
+        ];
+
+        // Initialize Quiz
+        function initializeQuiz() {
+            const form = document.getElementById('emotional-awareness-quiz');
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'bg-[#161B22] p-6 rounded-lg';
+                questionDiv.innerHTML = `
+                    <h3 class="text-xl font-bold mb-4 text-[#C9D1D9]">${index + 1}. ${q.question}</h3>
+                    <div class="space-y-3">
+                        ${q.options.map((option, i) => `
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="radio" name="q${index}" value="${i}" required
+                                    class="form-radio text-[#58A6FF] focus:ring-[#58A6FF]">
+                                <span class="text-[#C9D1D9]">${option}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                form.appendChild(questionDiv);
+            });
+        }
+
+        // Calculate Results
+        function calculateResults(formData) {
+            const results = {
+                'Self-Awareness': 0,
+                'Emotional Recognition': 0,
+                'Physical Awareness': 0,
+                'Self-Reflection': 0,
+                'Emotional Expression': 0,
+                'Social Awareness': 0,
+                'Decision Making': 0,
+                'Emotional Regulation': 0,
+                'Practice': 0,
+                'Confidence': 0
+            };
+
+            questions.forEach((q, index) => {
+                const answer = parseInt(formData.get(`q${index}`));
+                results[q.category] += (answer + 1) * 25; // Convert 0-3 to 25-100
+            });
+
+            return results;
+        }
+
+        // Display Results
+        function displayResults(results) {
+            const quizContainer = document.getElementById('quiz-container');
+            const resultsContainer = document.getElementById('results-container');
+            
+            quizContainer.classList.add('hidden');
+            resultsContainer.classList.remove('hidden');
+
+            // Create Chart
+            const ctx = document.getElementById('resultsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: Object.keys(results),
+                    datasets: [{
+                        label: 'Your Score',
+                        data: Object.values(results),
+                        backgroundColor: 'rgba(88, 166, 255, 0.2)',
+                        borderColor: '#58A6FF',
+                        pointBackgroundColor: '#58A6FF',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#58A6FF'
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: '#30363D'
+                            },
+                            grid: {
+                                color: '#30363D'
+                            },
+                            pointLabels: {
+                                color: '#C9D1D9'
+                            },
+                            ticks: {
+                                color: '#C9D1D9',
+                                backdropColor: '#0D1117'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#C9D1D9'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Generate Analysis
+            const analysisText = document.getElementById('analysis-text');
+            const averageScore = Object.values(results).reduce((a, b) => a + b, 0) / Object.values(results).length;
+            
+            let analysis = '';
+            if (averageScore >= 80) {
+                analysis = `
+                    <p class="text-green-400">Excellent! Your emotional awareness is very well developed.</p>
+                    <p>You show strong capabilities in recognizing and understanding emotions, both in yourself and others.</p>
+                    <p>Consider focusing on maintaining these skills and sharing your knowledge with others.</p>
+                `;
+            } else if (averageScore >= 60) {
+                analysis = `
+                    <p class="text-yellow-400">Good! You have a solid foundation in emotional awareness.</p>
+                    <p>There are some areas where you could improve, but overall you're doing well.</p>
+                    <p>Consider practicing mindfulness exercises to further enhance your emotional awareness.</p>
+                `;
+            } else {
+                analysis = `
+                    <p class="text-red-400">There's room for improvement in your emotional awareness.</p>
+                    <p>Consider starting with basic mindfulness exercises and gradually building up your emotional awareness skills.</p>
+                    <p>Regular practice will help you develop better emotional awareness over time.</p>
+                `;
+            }
+            analysisText.innerHTML = analysis;
+        }
+
+        // Handle Form Submission
+        document.getElementById('emotional-awareness-quiz').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const results = calculateResults(formData);
+            displayResults(results);
+        });
+
+        // Initialize the quiz when the page loads
+        document.addEventListener('DOMContentLoaded', initializeQuiz);
+    </script>
+</body>
+</html>

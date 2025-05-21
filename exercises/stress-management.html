@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stress Management Exercise - MindMatters</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-[#0D1117] text-[#C9D1D9]">
+    <!-- Navigation -->
+    <nav class="bg-[#161B22] p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="../index.html" class="text-[#58A6FF] text-xl font-bold">MindMatters</a>
+            <div class="hidden md:flex space-x-6">
+                <a href="../index.html" class="text-[#C9D1D9] hover:text-[#58A6FF]">Home</a>
+                <a href="../index.html#about" class="text-[#C9D1D9] hover:text-[#58A6FF]">About</a>
+                <a href="../index.html#resources" class="text-[#C9D1D9] hover:text-[#58A6FF]">Resources</a>
+                <a href="../index.html#contact" class="text-[#C9D1D9] hover:text-[#58A6FF]">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12">
+        <div id="assessment-container" class="max-w-3xl mx-auto">
+            <h1 class="text-4xl font-bold text-center mb-8 text-[#58A6FF]">Stress Management Assessment</h1>
+            <p class="text-center mb-12 text-lg">Rate how often you experience these stress-related symptoms.</p>
+
+            <form id="stress-quiz" class="space-y-8">
+                <!-- Questions will be dynamically inserted here -->
+            </form>
+
+            <div class="text-center mt-8">
+                <button type="submit" form="stress-quiz" class="bg-[#58A6FF] text-[#0D1117] px-8 py-3 rounded-lg hover:bg-[#238636] hover:text-[#C9D1D9] transition-colors text-lg">
+                    Submit Assessment
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Section (Hidden initially) -->
+        <div id="results-container" class="max-w-4xl mx-auto hidden">
+            <h2 class="text-3xl font-bold text-center mb-8 text-[#58A6FF]">Your Stress Assessment Results</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <!-- Chart -->
+                <div class="bg-[#161B22] p-6 rounded-lg">
+                    <canvas id="resultsChart"></canvas>
+                </div>
+                
+                <!-- Analysis -->
+                <div class="bg-[#161B22] p-6 rounded-lg">
+                    <h3 class="text-2xl font-bold mb-4 text-[#C9D1D9]">Analysis</h3>
+                    <div id="analysis-text" class="space-y-4">
+                        <!-- Analysis will be inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coping Strategies -->
+            <div class="bg-[#161B22] p-6 rounded-lg mb-12">
+                <h3 class="text-2xl font-bold mb-6 text-[#C9D1D9]">Recommended Coping Strategies</h3>
+                <div id="coping-strategies" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Strategies will be inserted here -->
+                </div>
+            </div>
+
+            <div class="text-center">
+                <a href="../exercises.html" class="inline-block bg-[#58A6FF] text-[#0D1117] px-8 py-3 rounded-lg hover:bg-[#238636] hover:text-[#C9D1D9] transition-colors text-lg">
+                    Back to Exercises
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Assessment Questions
+        const questions = [
+            {
+                symptom: "Difficulty falling or staying asleep",
+                category: "Sleep"
+            },
+            {
+                symptom: "Feeling overwhelmed by daily tasks",
+                category: "Daily Functioning"
+            },
+            {
+                symptom: "Physical tension or muscle pain",
+                category: "Physical Symptoms"
+            },
+            {
+                symptom: "Difficulty concentrating",
+                category: "Cognitive"
+            },
+            {
+                symptom: "Irritability or mood swings",
+                category: "Emotional"
+            },
+            {
+                symptom: "Changes in appetite",
+                category: "Physical Symptoms"
+            },
+            {
+                symptom: "Feeling anxious or worried",
+                category: "Emotional"
+            },
+            {
+                symptom: "Fatigue or low energy",
+                category: "Physical Symptoms"
+            },
+            {
+                symptom: "Difficulty making decisions",
+                category: "Cognitive"
+            },
+            {
+                symptom: "Social withdrawal",
+                category: "Social"
+            }
+        ];
+
+        // Coping Strategies
+        const copingStrategies = {
+            Sleep: [
+                "Establish a consistent sleep schedule",
+                "Create a relaxing bedtime routine",
+                "Limit screen time before bed",
+                "Ensure your bedroom is dark and quiet"
+            ],
+            Daily: [
+                "Break tasks into smaller, manageable steps",
+                "Use a planner or to-do list",
+                "Take regular breaks during work",
+                "Practice time management techniques"
+            ],
+            Physical: [
+                "Practice deep breathing exercises",
+                "Engage in regular physical activity",
+                "Try progressive muscle relaxation",
+                "Maintain a balanced diet"
+            ],
+            Cognitive: [
+                "Practice mindfulness meditation",
+                "Use stress-reduction apps",
+                "Take short mental breaks",
+                "Write in a journal"
+            ],
+            Emotional: [
+                "Talk to a trusted friend or counselor",
+                "Practice positive self-talk",
+                "Engage in hobbies you enjoy",
+                "Learn to recognize and manage triggers"
+            ],
+            Social: [
+                "Schedule regular social activities",
+                "Join a support group",
+                "Practice active listening",
+                "Set healthy boundaries"
+            ]
+        };
+
+        // Initialize Assessment
+        function initializeAssessment() {
+            const form = document.getElementById('stress-quiz');
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'bg-[#161B22] p-6 rounded-lg';
+                questionDiv.innerHTML = `
+                    <h3 class="text-xl font-bold mb-4 text-[#C9D1D9]">${q.symptom}</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="radio" name="q${index}" value="0" required
+                                class="form-radio text-[#58A6FF] focus:ring-[#58A6FF]">
+                            <span class="text-[#C9D1D9]">Never</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="radio" name="q${index}" value="1" required
+                                class="form-radio text-[#58A6FF] focus:ring-[#58A6FF]">
+                            <span class="text-[#C9D1D9]">Rarely</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="radio" name="q${index}" value="2" required
+                                class="form-radio text-[#58A6FF] focus:ring-[#58A6FF]">
+                            <span class="text-[#C9D1D9]">Sometimes</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="radio" name="q${index}" value="3" required
+                                class="form-radio text-[#58A6FF] focus:ring-[#58A6FF]">
+                            <span class="text-[#C9D1D9]">Often</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="radio" name="q${index}" value="4" required
+                                class="form-radio text-[#58A6FF] focus:ring-[#58A6FF]">
+                            <span class="text-[#C9D1D9]">Very Often</span>
+                        </label>
+                    </div>
+                `;
+                form.appendChild(questionDiv);
+            });
+        }
+
+        // Calculate Results
+        function calculateResults(formData) {
+            const results = {
+                'Sleep': 0,
+                'Daily Functioning': 0,
+                'Physical Symptoms': 0,
+                'Cognitive': 0,
+                'Emotional': 0,
+                'Social': 0
+            };
+
+            questions.forEach((q, index) => {
+                const answer = parseInt(formData.get(`q${index}`));
+                results[q.category] += answer;
+            });
+
+            // Normalize scores to percentage
+            Object.keys(results).forEach(key => {
+                results[key] = (results[key] / 4) * 100; // 4 is max score per category
+            });
+
+            return results;
+        }
+
+        // Display Results
+        function displayResults(results) {
+            const assessmentContainer = document.getElementById('assessment-container');
+            const resultsContainer = document.getElementById('results-container');
+            
+            assessmentContainer.classList.add('hidden');
+            resultsContainer.classList.remove('hidden');
+
+            // Create Chart
+            const ctx = document.getElementById('resultsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: Object.keys(results),
+                    datasets: [{
+                        label: 'Stress Level',
+                        data: Object.values(results),
+                        backgroundColor: 'rgba(88, 166, 255, 0.2)',
+                        borderColor: '#58A6FF',
+                        pointBackgroundColor: '#58A6FF',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#58A6FF'
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: '#30363D'
+                            },
+                            grid: {
+                                color: '#30363D'
+                            },
+                            pointLabels: {
+                                color: '#C9D1D9'
+                            },
+                            ticks: {
+                                color: '#C9D1D9',
+                                backdropColor: '#0D1117'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#C9D1D9'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Generate Analysis
+            const analysisText = document.getElementById('analysis-text');
+            const averageScore = Object.values(results).reduce((a, b) => a + b, 0) / Object.values(results).length;
+            
+            let analysis = '';
+            if (averageScore >= 75) {
+                analysis = `
+                    <p class="text-red-400">High stress levels detected.</p>
+                    <p>Your responses indicate significant stress that may be affecting your daily life.</p>
+                    <p>Consider consulting with a mental health professional for support.</p>
+                `;
+            } else if (averageScore >= 50) {
+                analysis = `
+                    <p class="text-yellow-400">Moderate stress levels detected.</p>
+                    <p>You're experiencing notable stress that could benefit from management strategies.</p>
+                    <p>Focus on implementing the recommended coping strategies.</p>
+                `;
+            } else {
+                analysis = `
+                    <p class="text-green-400">Low stress levels detected.</p>
+                    <p>You're managing stress well, but continue practicing healthy habits.</p>
+                    <p>Consider sharing your stress management techniques with others.</p>
+                `;
+            }
+            analysisText.innerHTML = analysis;
+
+            // Display Coping Strategies
+            const strategiesContainer = document.getElementById('coping-strategies');
+            strategiesContainer.innerHTML = '';
+            
+            Object.entries(results).forEach(([category, score]) => {
+                if (score >= 50) { // Only show strategies for high-stress categories
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.className = 'bg-[#0D1117] p-4 rounded-lg';
+                    categoryDiv.innerHTML = `
+                        <h4 class="text-xl font-bold mb-3 text-[#58A6FF]">${category}</h4>
+                        <ul class="list-disc list-inside space-y-2">
+                            ${copingStrategies[category.split(' ')[0]].map(strategy => `
+                                <li class="text-[#C9D1D9]">${strategy}</li>
+                            `).join('')}
+                        </ul>
+                    `;
+                    strategiesContainer.appendChild(categoryDiv);
+                }
+            });
+        }
+
+        // Handle Form Submission
+        document.getElementById('stress-quiz').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const results = calculateResults(formData);
+            displayResults(results);
+        });
+
+        // Initialize the assessment when the page loads
+        document.addEventListener('DOMContentLoaded', initializeAssessment);
+    </script>
+</body>
+</html> 

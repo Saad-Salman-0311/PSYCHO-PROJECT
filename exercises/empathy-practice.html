@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empathy Practice Exercise - MindMatters</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-[#0D1117] text-[#C9D1D9]">
+    <!-- Navigation -->
+    <nav class="bg-[#161B22] p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="../index.html" class="text-[#58A6FF] text-xl font-bold">MindMatters</a>
+            <div class="hidden md:flex space-x-6">
+                <a href="../index.html" class="text-[#C9D1D9] hover:text-[#58A6FF]">Home</a>
+                <a href="../index.html#about" class="text-[#C9D1D9] hover:text-[#58A6FF]">About</a>
+                <a href="../index.html#resources" class="text-[#C9D1D9] hover:text-[#58A6FF]">Resources</a>
+                <a href="../index.html#contact" class="text-[#C9D1D9] hover:text-[#58A6FF]">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12">
+        <div id="quiz-container" class="max-w-3xl mx-auto">
+            <h1 class="text-4xl font-bold text-center mb-8 text-[#58A6FF]">Empathy Practice Assessment</h1>
+            <p class="text-center mb-12 text-lg">Read each scenario and choose the most empathetic response.</p>
+
+            <form id="empathy-quiz" class="space-y-8">
+                <!-- Questions will be dynamically inserted here -->
+            </form>
+
+            <div class="text-center mt-8">
+                <button type="submit" form="empathy-quiz" class="bg-[#58A6FF] text-[#0D1117] px-8 py-3 rounded-lg hover:bg-[#238636] hover:text-[#C9D1D9] transition-colors text-lg">
+                    Submit Answers
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Section (Hidden initially) -->
+        <div id="results-container" class="max-w-4xl mx-auto hidden">
+            <h2 class="text-3xl font-bold text-center mb-8 text-[#58A6FF]">Your Results</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <!-- Chart -->
+                <div class="bg-[#161B22] p-6 rounded-lg">
+                    <canvas id="resultsChart"></canvas>
+                </div>
+                
+                <!-- Analysis -->
+                <div class="bg-[#161B22] p-6 rounded-lg">
+                    <h3 class="text-2xl font-bold mb-4 text-[#C9D1D9]">Analysis</h3>
+                    <div id="analysis-text" class="space-y-4">
+                        <!-- Analysis will be inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <a href="../exercises.html" class="inline-block bg-[#58A6FF] text-[#0D1117] px-8 py-3 rounded-lg hover:bg-[#238636] hover:text-[#C9D1D9] transition-colors text-lg">
+                    Back to Exercises
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Quiz Questions
+        const questions = [
+            {
+                scenario: "A colleague seems upset after a meeting. They're sitting alone at their desk, looking down.",
+                options: [
+                    "Ignore them and continue with your work",
+                    "Ask them directly what's wrong",
+                    "Offer a listening ear and ask if they'd like to talk",
+                    "Tell them to cheer up"
+                ],
+                category: "Emotional Recognition"
+            },
+            {
+                scenario: "A friend shares that they're struggling with a difficult family situation.",
+                options: [
+                    "Change the subject to something more positive",
+                    "Share your own similar experience immediately",
+                    "Listen attentively and validate their feelings",
+                    "Offer immediate solutions to their problem"
+                ],
+                category: "Active Listening"
+            },
+            {
+                scenario: "Someone in your class is being teased by others.",
+                options: [
+                    "Stay out of it to avoid conflict",
+                    "Join in with the teasing to fit in",
+                    "Stand up for them and report the bullying",
+                    "Tell them to ignore it"
+                ],
+                category: "Social Support"
+            },
+            {
+                scenario: "A team member makes a mistake that affects the project.",
+                options: [
+                    "Point out their mistake in front of everyone",
+                    "Ignore it and fix it yourself",
+                    "Discuss it privately and offer support",
+                    "Complain to the manager"
+                ],
+                category: "Understanding"
+            },
+            {
+                scenario: "A friend is excited about an achievement you don't think is significant.",
+                options: [
+                    "Tell them it's not a big deal",
+                    "Show genuine enthusiasm for their accomplishment",
+                    "Change the subject",
+                    "Compare it to your own achievements"
+                ],
+                category: "Perspective Taking"
+            },
+            {
+                scenario: "Someone shares a different opinion in a group discussion.",
+                options: [
+                    "Immediately disagree with them",
+                    "Listen and try to understand their perspective",
+                    "Ignore their comment",
+                    "Make fun of their opinion"
+                ],
+                category: "Open-mindedness"
+            },
+            {
+                scenario: "A classmate is nervous about an upcoming presentation.",
+                options: [
+                    "Tell them to get over it",
+                    "Share your own presentation tips and offer to practice with them",
+                    "Ignore their anxiety",
+                    "Tell them they'll probably do poorly"
+                ],
+                category: "Support"
+            },
+            {
+                scenario: "A friend is grieving the loss of a pet.",
+                options: [
+                    "Tell them it's just a pet",
+                    "Share your own pet loss experience immediately",
+                    "Offer condolences and be present for them",
+                    "Suggest getting a new pet right away"
+                ],
+                category: "Compassion"
+            },
+            {
+                scenario: "Someone is struggling with a new task at work.",
+                options: [
+                    "Tell them to figure it out themselves",
+                    "Take over the task completely",
+                    "Offer guidance while letting them learn",
+                    "Report their incompetence to the manager"
+                ],
+                category: "Guidance"
+            },
+            {
+                scenario: "A colleague is celebrating a cultural holiday you're not familiar with.",
+                options: [
+                    "Ignore their celebration",
+                    "Learn about the holiday and show interest",
+                    "Tell them your holiday is better",
+                    "Make jokes about their traditions"
+                ],
+                category: "Cultural Awareness"
+            }
+        ];
+
+        // Initialize Quiz
+        function initializeQuiz() {
+            const form = document.getElementById('empathy-quiz');
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'bg-[#161B22] p-6 rounded-lg';
+                questionDiv.innerHTML = `
+                    <h3 class="text-xl font-bold mb-4 text-[#C9D1D9]">Scenario ${index + 1}:</h3>
+                    <p class="mb-4 text-[#C9D1D9]">${q.scenario}</p>
+                    <div class="space-y-3">
+                        ${q.options.map((option, i) => `
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="radio" name="q${index}" value="${i}" required
+                                    class="form-radio text-[#58A6FF] focus:ring-[#58A6FF]">
+                                <span class="text-[#C9D1D9]">${option}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                form.appendChild(questionDiv);
+            });
+        }
+
+        // Calculate Results
+        function calculateResults(formData) {
+            const results = {
+                'Emotional Recognition': 0,
+                'Active Listening': 0,
+                'Social Support': 0,
+                'Understanding': 0,
+                'Perspective Taking': 0,
+                'Open-mindedness': 0,
+                'Support': 0,
+                'Compassion': 0,
+                'Guidance': 0,
+                'Cultural Awareness': 0
+            };
+
+            questions.forEach((q, index) => {
+                const answer = parseInt(formData.get(`q${index}`));
+                // Most empathetic answer is usually the third option (index 2)
+                const score = answer === 2 ? 100 : (answer === 1 ? 75 : (answer === 3 ? 50 : 25));
+                results[q.category] = score;
+            });
+
+            return results;
+        }
+
+        // Display Results
+        function displayResults(results) {
+            const quizContainer = document.getElementById('quiz-container');
+            const resultsContainer = document.getElementById('results-container');
+            
+            quizContainer.classList.add('hidden');
+            resultsContainer.classList.remove('hidden');
+
+            // Create Chart
+            const ctx = document.getElementById('resultsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: Object.keys(results),
+                    datasets: [{
+                        label: 'Your Score',
+                        data: Object.values(results),
+                        backgroundColor: 'rgba(88, 166, 255, 0.2)',
+                        borderColor: '#58A6FF',
+                        pointBackgroundColor: '#58A6FF',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#58A6FF'
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: '#30363D'
+                            },
+                            grid: {
+                                color: '#30363D'
+                            },
+                            pointLabels: {
+                                color: '#C9D1D9'
+                            },
+                            ticks: {
+                                color: '#C9D1D9',
+                                backdropColor: '#0D1117'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#C9D1D9'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Generate Analysis
+            const analysisText = document.getElementById('analysis-text');
+            const averageScore = Object.values(results).reduce((a, b) => a + b, 0) / Object.values(results).length;
+            
+            let analysis = '';
+            if (averageScore >= 80) {
+                analysis = `
+                    <p class="text-green-400">Excellent! You demonstrate a high level of empathy.</p>
+                    <p>You show strong capabilities in understanding and responding to others' emotions and situations.</p>
+                    <p>Consider using your empathy skills to help others develop their own emotional intelligence.</p>
+                `;
+            } else if (averageScore >= 60) {
+                analysis = `
+                    <p class="text-yellow-400">Good! You have a solid foundation in empathy.</p>
+                    <p>There are some areas where you could improve your empathetic responses.</p>
+                    <p>Practice active listening and try to put yourself in others' shoes more often.</p>
+                `;
+            } else {
+                analysis = `
+                    <p class="text-red-400">There's room for improvement in your empathy skills.</p>
+                    <p>Focus on developing active listening skills and trying to understand others' perspectives.</p>
+                    <p>Remember that empathy is a skill that can be developed with practice.</p>
+                `;
+            }
+            analysisText.innerHTML = analysis;
+        }
+
+        // Handle Form Submission
+        document.getElementById('empathy-quiz').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const results = calculateResults(formData);
+            displayResults(results);
+        });
+
+        // Initialize the quiz when the page loads
+        document.addEventListener('DOMContentLoaded', initializeQuiz);
+    </script>
+</body>
+</html> 

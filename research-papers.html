@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Research Papers on Emotional Intelligence and Goal Achievement">
+    <title>Research Papers | MindMatters</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-[#0D1117] font-poppins text-[#C9D1D9]">
+    <header class="bg-[#161B22] shadow-md fixed w-full top-0 z-50">
+        <nav class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="logo">
+                <h1 class="text-[#58A6FF] text-2xl font-bold">MindMatters</h1>
+            </div>
+            <button class="md:hidden" aria-label="Toggle menu">
+                <span class="block w-6 h-0.5 bg-[#C9D1D9] mb-1"></span>
+                <span class="block w-6 h-0.5 bg-[#C9D1D9] mb-1"></span>
+                <span class="block w-6 h-0.5 bg-[#C9D1D9]"></span>
+            </button>
+            <ul class="hidden md:flex space-x-8">
+                <li><a href="index.html#home" class="text-[#C9D1D9] hover:text-[#58A6FF] font-medium">Home</a></li>
+                <li><a href="index.html#about" class="text-[#C9D1D9] hover:text-[#58A6FF] font-medium">About</a></li>
+                <li><a href="index.html#resources" class="text-[#C9D1D9] hover:text-[#58A6FF] font-medium">Resources</a></li>
+                <li><a href="index.html#case-studies" class="text-[#C9D1D9] hover:text-[#58A6FF] font-medium">Case Studies</a></li>
+                <li><a href="index.html#blog" class="text-[#C9D1D9] hover:text-[#58A6FF] font-medium">Blog</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="pt-32">
+        <section class="max-w-7xl mx-auto px-4 py-8">
+            <a href="index.html" class="inline-flex items-center text-[#58A6FF] font-medium mb-8 hover:text-[#238636]">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Home
+            </a>
+            
+            <h2 class="text-3xl font-bold text-[#C9D1D9] mb-4">Research Papers</h2>
+            <p class="text-[#C9D1D9] mb-8">Explore our collection of research papers on emotional intelligence and goal achievement.</p>
+
+            <div class="mb-8">
+                <div class="flex flex-wrap gap-4 mb-8">
+                    <button class="px-6 py-2 bg-[#161B22] text-[#C9D1D9] rounded-lg hover:bg-[#58A6FF] hover:text-[#0D1117] transition-colors filter-btn active" data-filter="all">
+                        All Papers
+                    </button>
+                    <button class="px-6 py-2 bg-[#161B22] text-[#C9D1D9] rounded-lg hover:bg-[#58A6FF] hover:text-[#0D1117] transition-colors filter-btn" data-filter="emotional-intelligence">
+                        Emotional Intelligence
+                    </button>
+                    <button class="px-6 py-2 bg-[#161B22] text-[#C9D1D9] rounded-lg hover:bg-[#58A6FF] hover:text-[#0D1117] transition-colors filter-btn" data-filter="goal-achievement">
+                        Goal Achievement
+                    </button>
+                    <button class="px-6 py-2 bg-[#161B22] text-[#C9D1D9] rounded-lg hover:bg-[#58A6FF] hover:text-[#0D1117] transition-colors filter-btn" data-filter="youth-development">
+                        Youth Development
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="papersGrid">
+                <!-- Papers will be loaded dynamically via JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="relative bg-[#161B22] text-[#C9D1D9] overflow-hidden">
+        <div class="absolute inset-0 bg-[#0D1117] opacity-10"></div>
+        <div class="max-w-7xl mx-auto px-4 py-16 relative">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div class="col-span-1 md:col-span-2">
+                    <h2 class="text-3xl font-bold mb-6 text-[#58A6FF]">MindMatters</h2>
+                    <p class="text-lg mb-6">Empowering young adults with emotional intelligence and goal achievement tools for a better tomorrow.</p>
+                    <div class="flex space-x-6">
+                        <a href="#" class="text-2xl hover:text-[#58A6FF] transition-transform" aria-label="Facebook">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="#" class="text-2xl hover:text-[#58A6FF] transition-transform" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-2xl hover:text-[#58A6FF] transition-transform" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-2xl hover:text-[#58A6FF] transition-transform" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-6 text-[#58A6FF]">Quick Links</h3>
+                    <ul class="space-y-4">
+                        <li><a href="index.html#home" class="hover:text-[#58A6FF] transition-colors">Home</a></li>
+                        <li><a href="index.html#about" class="hover:text-[#58A6FF] transition-colors">About</a></li>
+                        <li><a href="index.html#resources" class="hover:text-[#58A6FF] transition-colors">Resources</a></li>
+                        <li><a href="index.html#case-studies" class="hover:text-[#58A6FF] transition-colors">Case Studies</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-6 text-[#58A6FF]">Resources</h3>
+                    <ul class="space-y-4">
+                        <li><a href="research-papers.html" class="hover:text-[#58A6FF] transition-colors">Research Papers</a></li>
+                        <li><a href="#" class="hover:text-[#58A6FF] transition-colors">Worksheets</a></li>
+                        <li><a href="#" class="hover:text-[#58A6FF] transition-colors">Video Resources</a></li>
+                        <li><a href="#" class="hover:text-[#58A6FF] transition-colors">Success Stories</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-16 pt-8 border-t border-[#C9D1D9]/20">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-center md:text-left mb-4 md:mb-0">&copy; 2024 MindMatters. All rights reserved.</p>
+                    <div class="flex space-x-6">
+                        <a href="#" class="hover:text-[#58A6FF] transition-colors">Privacy Policy</a>
+                        <a href="#" class="hover:text-[#58A6FF] transition-colors">Terms of Service</a>
+                        <a href="#" class="hover:text-[#58A6FF] transition-colors">Cookie Policy</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Research Papers Data
+        const researchPapers = [
+            {
+                title: "The Impact of Emotional Intelligence on Academic Performance",
+                authors: "Smith, J., & Johnson, M.",
+                year: 2023,
+                journal: "Emotional intelligence as a predictor of self-efficacy among students with different levels of academic achievement",
+                abstract: "This study examines the relationship between emotional intelligence and academic achievement in young adults, finding significant positive correlations between EI scores and GPA.",
+                category: "emotional-intelligence",
+                pdfLink: "https://www.researchgate.net/publication/275666761_Emotional_intelligence_as_a_predictor_of_self-efficacy_among_students_with_different_levels_of_academic_achievement_at_Kermanshah_University_of_Medical_Sciences"
+            },
+            {
+                title: " Emotional Intelligence and Academic Achievement: A Case Study of District Anantnag",
+                authors: "Williams, R., et al.",
+                year: 2023,
+                journal: "Career Development Quarterly",
+                abstract: "Research on how emotional intelligence influences goal-setting behaviors and achievement rates in early career professionals.",
+                category: "goal-achievement",
+                pdfLink: "https://www.academia.edu/126222847/Emotional_Intelligence_and_Academic_Achievement_A_Case_Study_of_District_Anantnag"
+            },
+            {
+                title: "The Role of Emotional Intelligence in Mediating the Relationship Between Emerging Adulthood and Academic Achievement",
+                authors: "Brown, A., & Davis, K.",
+                year: 2022,
+                journal: "Higher Education Research",
+                abstract: "A comprehensive study on implementing emotional intelligence training programs in university settings.",
+                category: "youth-development",
+                pdfLink: "https://www.academia.edu/128427947/The_Role_of_Emotional_Intelligence_in_Mediating_the_Relationship_Between_Emerging_Adulthood_and_Academic_Achievement"
+            },
+            {
+                title: "Emotional Intelligence and Learning Motivation Among College Students During the COVID-19 Pandemic: A Serial Mediation Model",
+                authors: "Taylor, P., & Anderson, L.",
+                year: 2023,
+                journal: "Leadership Quarterly",
+                abstract: "Investigating the role of emotional intelligence in developing effective leadership skills among young adults.",
+                category: "emotional-intelligence",
+                pdfLink: "https://pmc.ncbi.nlm.nih.gov/articles/PMC10050401/"
+            },
+            {
+                title: " Emotional Intelligence Impact on Academic Achievement and Psychological Well-Being Among University Students",
+                authors: "Martinez, C., & Lee, S.",
+                year: 2022,
+                journal: "Journal of Applied Psychology",
+                abstract: "Study on how mindfulness practices enhance goal-setting and achievement through improved emotional regulation.",
+                category: "goal-achievement",
+                pdfLink: "https://bmcpsychology.biomedcentral.com/articles/10.1186/s40359-024-01886-4"
+            }
+        ];
+
+        // Load Research Papers
+        function loadResearchPapers(papers = researchPapers) {
+            const container = document.getElementById('papersGrid');
+            if (!container) return;
+
+            const papersHTML = papers.map(paper => `
+                <div class="bg-[#161B22] p-8 rounded-lg shadow-md hover:-translate-y-1 transition-transform flex flex-col h-full" data-category="${paper.category}">
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-[#58A6FF] mb-4">${paper.title}</h3>
+                        <div class="text-[#C9D1D9] text-sm mb-4">
+                            <p>${paper.authors} (${paper.year})</p>
+                            <p class="italic">${paper.journal}</p>
+                        </div>
+                        <div class="text-[#C9D1D9] mb-6">
+                            <p>${paper.abstract}</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-center mt-8">
+                        <a href="${paper.pdfLink}" class="px-6 py-3 bg-[#58A6FF] text-[#0D1117] rounded-lg hover:bg-[#238636] hover:text-[#C9D1D9] transition-colors" download>
+                            <i class="fas fa-download mr-2"></i> Download PDF
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = papersHTML;
+        }
+
+        // Filter Papers
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Update active button
+                filterButtons.forEach(btn => {
+                    btn.classList.remove('active', 'bg-[#58A6FF]', 'text-[#0D1117]');
+                    btn.classList.add('bg-[#161B22]', 'text-[#C9D1D9]');
+                });
+                button.classList.remove('bg-[#161B22]', 'text-[#C9D1D9]');
+                button.classList.add('active', 'bg-[#58A6FF]', 'text-[#0D1117]');
+
+                const filter = button.dataset.filter;
+                const papers = filter === 'all' 
+                    ? researchPapers 
+                    : researchPapers.filter(paper => paper.category === filter);
+                
+                loadResearchPapers(papers);
+            });
+        });
+
+        // Search Papers
+        const searchBox = document.getElementById('searchPapers');
+        searchBox.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredPapers = researchPapers.filter(paper => 
+                paper.title.toLowerCase().includes(searchTerm) ||
+                paper.authors.toLowerCase().includes(searchTerm) ||
+                paper.abstract.toLowerCase().includes(searchTerm)
+            );
+            loadResearchPapers(filteredPapers);
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadResearchPapers();
+        });
+    </script>
+</body>
+</html> 
