@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body class="bg-[#0D1117] text-[#C9D1D9]">
     <!-- Navigation -->
@@ -32,7 +33,7 @@
                 <!-- Questions will be dynamically inserted here -->
             </form>
 
-            <div class="text-center mt-8">
+            <div class="text-center mt-8 space-x-4">
                 <button type="submit" form="emotional-awareness-quiz" class="bg-[#58A6FF] text-[#0D1117] px-8 py-3 rounded-lg hover:bg-[#238636] hover:text-[#C9D1D9] transition-colors text-lg">
                     Submit Answers
                 </button>
@@ -58,10 +59,13 @@
                 </div>
             </div>
 
-            <div class="text-center">
+            <div class="text-center space-x-4">
                 <a href="../exercises.html" class="inline-block bg-[#58A6FF] text-[#0D1117] px-8 py-3 rounded-lg hover:bg-[#238636] hover:text-[#C9D1D9] transition-colors text-lg">
                     Back to Exercises
                 </a>
+                <button id="downloadPdf" class="inline-block bg-[#238636] text-[#C9D1D9] px-8 py-3 rounded-lg hover:bg-[#58A6FF] hover:text-[#0D1117] transition-colors text-lg">
+                    <i class="fas fa-download mr-2"></i>Download PDF
+                </button>
             </div>
         </div>
     </main>
@@ -176,44 +180,63 @@
 
             // Create Chart
             const ctx = document.getElementById('resultsChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'radar',
+            const chart = new Chart(ctx, {
+                type: 'bar',
                 data: {
-                    labels: Object.keys(results),
+                    labels: [
+                        'Self-Awareness',
+                        'Emotional Recognition',
+                        'Physical Awareness',
+                        'Self-Reflection',
+                        'Emotional Expression',
+                        'Social Awareness',
+                        'Decision Making',
+                        'Emotional Regulation',
+                        'Practice',
+                        'Confidence'
+                    ],
                     datasets: [{
                         label: 'Your Score',
                         data: Object.values(results),
-                        backgroundColor: 'rgba(88, 166, 255, 0.2)',
+                        backgroundColor: '#58A6FF',
                         borderColor: '#58A6FF',
-                        pointBackgroundColor: '#58A6FF',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#58A6FF'
+                        borderWidth: 1
                     }]
                 },
                 options: {
+                    indexAxis: 'y',
                     scales: {
-                        r: {
-                            angleLines: {
-                                color: '#30363D'
-                            },
+                        x: {
+                            display: false,
+                            max: 100
+                        },
+                        y: {
                             grid: {
-                                color: '#30363D'
-                            },
-                            pointLabels: {
-                                color: '#C9D1D9'
+                                display: false
                             },
                             ticks: {
                                 color: '#C9D1D9',
-                                backdropColor: '#0D1117'
+                                font: {
+                                    size: 12
+                                },
+                                padding: 10
                             }
                         }
                     },
                     plugins: {
                         legend: {
-                            labels: {
-                                color: '#C9D1D9'
-                            }
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: false
+                        }
+                    },
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    layout: {
+                        padding: {
+                            left: 20,
+                            right: 20
                         }
                     }
                 }
@@ -244,7 +267,85 @@
                 `;
             }
             analysisText.innerHTML = analysis;
+
+            // Store results for PDF generation
+            window.quizResults = {
+                results: results,
+                averageScore: averageScore,
+                analysis: analysis,
+                chart: chart
+            };
         }
+
+        // Generate and Download PDF
+        document.getElementById('downloadPdf').addEventListener('click', async () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add title
+            doc.setFontSize(24);
+            doc.setTextColor(0, 51, 102); // Dark blue color for title
+            doc.text('Emotional Awareness Assessment Results', 20, 20);
+            
+            // Add date
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0); // Black color for regular text
+            doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 30);
+            
+            // Add scores
+            doc.setFontSize(16);
+            doc.setTextColor(0, 51, 102); // Dark blue color for heading
+            doc.text('Your Scores:', 20, 45);
+            
+            let yPos = 55;
+            Object.entries(window.quizResults.results).forEach(([category, score]) => {
+                doc.setFontSize(12);
+                doc.setTextColor(0, 0, 0); // Black color for regular text
+                doc.text(`${category}: ${score}%`, 30, yPos);
+                
+                // Draw progress bar
+                const barWidth = 100;
+                const barHeight = 8;
+                const barX = 90;
+                const barY = yPos - 4;
+                
+                // Background bar
+                doc.setFillColor(35, 54, 34);
+                doc.rect(barX, barY, barWidth, barHeight, 'F');
+                
+                // Score bar
+                doc.setFillColor(88, 166, 255);
+                doc.rect(barX, barY, (score / 100) * barWidth, barHeight, 'F');
+                
+                yPos += 15;
+            });
+            
+            // Add analysis
+            yPos += 10;
+            doc.setFontSize(16);
+            doc.setTextColor(0, 51, 102); // Dark blue color for heading
+            doc.text('Analysis:', 20, yPos);
+            
+            // Convert HTML analysis to plain text
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = window.quizResults.analysis;
+            const analysisText = tempDiv.textContent;
+            
+            // Split analysis into lines and add to PDF
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0); // Black color for regular text
+            const splitText = doc.splitTextToSize(analysisText, 170);
+            doc.text(splitText, 20, yPos + 10);
+            
+            // Add average score
+            yPos += splitText.length * 7 + 20;
+            doc.setFontSize(14);
+            doc.setTextColor(0, 51, 102); // Dark blue color for heading
+            doc.text(`Overall Average Score: ${Math.round(window.quizResults.averageScore)}%`, 20, yPos);
+            
+            // Save the PDF
+            doc.save('emotional-awareness-results.pdf');
+        });
 
         // Handle Form Submission
         document.getElementById('emotional-awareness-quiz').addEventListener('submit', (e) => {
@@ -254,8 +355,8 @@
             displayResults(results);
         });
 
-        // Initialize the quiz when the page loads
-        document.addEventListener('DOMContentLoaded', initializeQuiz);
+        // Initialize Quiz
+        initializeQuiz();
     </script>
 </body>
 </html>
