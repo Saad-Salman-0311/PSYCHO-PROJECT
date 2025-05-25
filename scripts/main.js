@@ -123,7 +123,7 @@ const blogPosts = [
         id: 2,
         title: "Emotional Intelligence in Leadership",
         description: "This article highlights the critical role of emotional intelligence in effective leadership. It explains that EI encompasses the ability to understand and manage one's own emotions, as well as recognize and influence the emotions of others. The blog discusses how high EI contributes to better team coaching, stress management, feedback delivery, and collaboration. It also outlines the four components of EI: self-awareness, self-management, social awareness, and relationship management, emphasizing their importance in leadership contexts.",
-        imageUrl: "https://images.firstpost.com/uploads/2025/01/hitlter-salute-2025-01-e93d830113681ac2df43481311e6ad0b.jpg",
+        imageUrl: "https://th.bing.com/th/id/OIP.bLRXCl3kIJT5b_IFAmvFRwHaD4?rs=1&pid=ImgDetMain",
         link: "https://online.hbs.edu/blog/post/emotional-intelligence-in-leadership?utm_source=chatgpt.com"
     },
     {
