@@ -110,6 +110,62 @@ document.querySelectorAll('.animate-on-scroll').forEach(element => {
     observer.observe(element);
 });
 
+// Blog posts data
+const blogPosts = [
+    {
+        id: 1,
+        title: "What Is Emotional Intelligence?",
+        description: " This blog delves into the essence of emotional intelligence, defining it as the awareness of one's own emotions and the ability to use that awareness in life situations and relationships. It traces the evolution of EI from early psychological research to its current understanding, emphasizing that EI is a skill that can be developed over time. The article outlines the four pillars of EI: self-awareness, self-management, social awareness, and interpersonal management, providing practical insights into each.",
+        imageUrl: "https://blog.heartmanity.com/hs-fs/hubfs/Frustrated-male-employee-discussing-contract-details-over-the-phone.-857213750_2125x1416-compressor.jpeg?width=2121&name=Frustrated-male-employee-discussing-contract-details-over-the-phone.-857213750_2125x1416-compressor.jpeg",
+        link: "https://blog.heartmanity.com/what-is-emotional-intelligence?utm_source=chatgpt.com"
+    },
+    {
+        id: 2,
+        title: "Emotional Intelligence in Leadership",
+        description: "This article highlights the critical role of emotional intelligence in effective leadership. It explains that EI encompasses the ability to understand and manage one's own emotions, as well as recognize and influence the emotions of others. The blog discusses how high EI contributes to better team coaching, stress management, feedback delivery, and collaboration. It also outlines the four components of EI: self-awareness, self-management, social awareness, and relationship management, emphasizing their importance in leadership contexts.",
+        imageUrl: "https://images.firstpost.com/uploads/2025/01/hitlter-salute-2025-01-e93d830113681ac2df43481311e6ad0b.jpg",
+        link: "https://online.hbs.edu/blog/post/emotional-intelligence-in-leadership?utm_source=chatgpt.com"
+    },
+    {
+        id: 3,
+        title: "Here's Why Emotional Intelligence Is So Important",
+        description: "Explore practical ways to build mental resilience and cope with life's challenges.",
+        imageUrl: "https://th.bing.com/th/id/OIP.fDch9URDwUw2aNnkTSuGTwHaEo?rs=1&pid=ImgDetMain",
+        link: "https://www.calm.com/blog/why-is-emotional-intelligence-important?utm_source=chatgpt.com"
+    }
+];
+
+// Function to create a blog post card
+function createBlogPostCard(post) {
+    return `
+        <div class="bg-[#161B22] rounded-lg overflow-hidden shadow-md hover:-translate-y-1 transition-transform flex flex-col h-full">
+            <div class="relative h-48">
+                <img src="${post.imageUrl}" 
+                     alt="${post.imageAlt}" 
+                     class="w-full h-full object-cover">
+            </div>
+            <div class="p-6 flex flex-col flex-grow">
+                <h3 class="text-xl font-bold mb-3 text-[#C9D1D9] line-clamp-2">${post.title}</h3>
+                <p class="text-[#C9D1D9] mb-4 flex-grow line-clamp-3">${post.description}</p>
+                <a href="${post.link}" 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   class="text-[#58A6FF] hover:text-[#238636] transition-colors inline-block mt-auto">
+                    Read More →
+                </a>
+            </div>
+        </div>
+    `;
+}
+
+// Function to load blog posts
+function loadBlogPosts() {
+    const blogSection = document.querySelector('#blog .grid');
+    if (blogSection) {
+        blogSection.innerHTML = blogPosts.map(post => createBlogPostCard(post)).join('');
+    }
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     loadCaseStudies();
