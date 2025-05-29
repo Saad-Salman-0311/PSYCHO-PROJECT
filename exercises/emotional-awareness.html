@@ -31,13 +31,12 @@
 
             <form id="emotional-awareness-quiz" class="space-y-8">
                 <!-- Questions will be dynamically inserted here -->
+                <div class="text-center mt-8 space-x-4">
+                    <button type="submit" class="bg-[#58A6FF] text-[#0D1117] px-8 py-3 rounded-lg hover:bg-[#238636] hover:text-[#C9D1D9] transition-colors text-lg">
+                        Submit Answers
+                    </button>
+                </div>
             </form>
-
-            <div class="text-center mt-8 space-x-4">
-                <button type="submit" form="emotional-awareness-quiz" class="bg-[#58A6FF] text-[#0D1117] px-8 py-3 rounded-lg hover:bg-[#238636] hover:text-[#C9D1D9] transition-colors text-lg">
-                    Submit Answers
-                </button>
-            </div>
         </div>
 
         <!-- Results Section (Hidden initially) -->
@@ -187,23 +186,33 @@
         // Calculate Results
         function calculateResults(formData) {
             const results = {
-                'Self-Awareness': 0,
-                'Emotional Recognition': 0,
-                'Physical Awareness': 0,
-                'Self-Reflection': 0,
-                'Emotional Expression': 0,
-                'Social Awareness': 0,
-                'Decision Making': 0,
-                'Emotional Regulation': 0,
-                'Practice': 0,
-                'Confidence': 0
+                categories: {},
+                totalScore: 0
             };
 
             questions.forEach((q, index) => {
                 const answer = parseInt(formData.get(`q${index}`));
-                results[q.category] += (answer + 1) * 25; // Convert 0-3 to 25-100
+                const score = answer + 1; // Convert 0-3 to 1-4
+                
+                if (!results.categories[q.category]) {
+                    results.categories[q.category] = {
+                        total: 0,
+                        count: 0
+                    };
+                }
+                
+                results.categories[q.category].total += score;
+                results.categories[q.category].count += 1;
+                results.totalScore += score;
             });
 
+            // Calculate averages
+            Object.keys(results.categories).forEach(category => {
+                results.categories[category].average = 
+                    results.categories[category].total / results.categories[category].count;
+            });
+
+            results.averageScore = results.totalScore / questions.length;
             return results;
         }
 
@@ -217,101 +226,104 @@
 
             // Create Chart
             const ctx = document.getElementById('resultsChart').getContext('2d');
-            const chart = new Chart(ctx, {
-                type: 'bar',
+            new Chart(ctx, {
+                type: 'radar',
                 data: {
-                    labels: [
-                        'Self-Awareness',
-                        'Emotional Recognition',
-                        'Physical Awareness',
-                        'Self-Reflection',
-                        'Emotional Expression',
-                        'Social Awareness',
-                        'Decision Making',
-                        'Emotional Regulation',
-                        'Practice',
-                        'Confidence'
-                    ],
+                    labels: Object.keys(results.categories),
                     datasets: [{
-                        label: 'Your Score',
-                        data: Object.values(results),
-                        backgroundColor: '#58A6FF',
-                        borderColor: '#58A6FF',
-                        borderWidth: 1
+                        label: 'Your Scores',
+                        data: Object.values(results.categories).map(c => c.average),
+                        backgroundColor: 'rgba(88, 166, 255, 0.2)',
+                        borderColor: 'rgba(88, 166, 255, 1)',
+                        pointBackgroundColor: 'rgba(88, 166, 255, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(88, 166, 255, 1)'
                     }]
                 },
                 options: {
-                    indexAxis: 'y',
                     scales: {
-                        x: {
-                            display: false,
-                            max: 100
-                        },
-                        y: {
+                        r: {
+                            angleLines: {
+                                color: 'rgba(201, 209, 217, 0.2)'
+                            },
                             grid: {
-                                display: false
+                                color: 'rgba(201, 209, 217, 0.2)'
+                            },
+                            pointLabels: {
+                                color: '#C9D1D9'
                             },
                             ticks: {
                                 color: '#C9D1D9',
-                                font: {
-                                    size: 12
-                                },
-                                padding: 10
+                                backdropColor: 'transparent'
                             }
                         }
                     },
                     plugins: {
                         legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            enabled: false
-                        }
-                    },
-                    maintainAspectRatio: false,
-                    responsive: true,
-                    layout: {
-                        padding: {
-                            left: 20,
-                            right: 20
+                            labels: {
+                                color: '#C9D1D9'
+                            }
                         }
                     }
                 }
             });
 
             // Generate Analysis
+            const analysis = generateAnalysis(results);
             const analysisText = document.getElementById('analysis-text');
-            const averageScore = Object.values(results).reduce((a, b) => a + b, 0) / Object.values(results).length;
-            
-            let analysis = '';
-            if (averageScore >= 80) {
-                analysis = `
-                    <p class="text-green-400">Excellent! Your emotional awareness is very well developed.</p>
-                    <p>You show strong capabilities in recognizing and understanding emotions, both in yourself and others.</p>
-                    <p>Consider focusing on maintaining these skills and sharing your knowledge with others.</p>
-                `;
-            } else if (averageScore >= 60) {
-                analysis = `
-                    <p class="text-yellow-400">Good! You have a solid foundation in emotional awareness.</p>
-                    <p>There are some areas where you could improve, but overall you're doing well.</p>
-                    <p>Consider practicing mindfulness exercises to further enhance your emotional awareness.</p>
-                `;
-            } else {
-                analysis = `
-                    <p class="text-red-400">There's room for improvement in your emotional awareness.</p>
-                    <p>Consider starting with basic mindfulness exercises and gradually building up your emotional awareness skills.</p>
-                    <p>Regular practice will help you develop better emotional awareness over time.</p>
-                `;
-            }
             analysisText.innerHTML = analysis;
 
             // Store results for PDF generation
             window.quizResults = {
                 results: results,
-                averageScore: averageScore,
-                analysis: analysis,
-                chart: chart
+                analysis: analysis
             };
+        }
+
+        // Generate Analysis Text
+        function generateAnalysis(results) {
+            let analysis = `<div class="prose prose-invert max-w-none">`;
+            
+            // Overall Score
+            analysis += `<h4 class="text-xl font-bold mb-4">Overall Score: ${Math.round(results.averageScore * 25)}/100</h4>`;
+            
+            // Category Analysis
+            analysis += `<h4 class="text-xl font-bold mb-4">Category Analysis:</h4>`;
+            Object.entries(results.categories).forEach(([category, data]) => {
+                const score = Math.round(data.average * 25);
+                analysis += `<p class="mb-2"><strong>${category}:</strong> ${score}/100</p>`;
+            });
+
+            // Recommendations
+            analysis += `<h4 class="text-xl font-bold mt-6 mb-4">Recommendations:</h4>`;
+            
+            // Add recommendations based on scores
+            if (results.averageScore < 2) {
+                analysis += `<p>Your emotional awareness could benefit from regular practice. Consider:</p>
+                    <ul class="list-disc pl-6 mt-2">
+                        <li>Daily mindfulness meditation</li>
+                        <li>Journaling your emotions</li>
+                        <li>Practicing emotional labeling</li>
+                    </ul>`;
+            } else if (results.averageScore < 3) {
+                analysis += `<p>You have a good foundation in emotional awareness. To improve further:</p>
+                    <ul class="list-disc pl-6 mt-2">
+                        <li>Regular self-reflection</li>
+                        <li>Seeking feedback from others</li>
+                        <li>Practicing active listening</li>
+                    </ul>`;
+            } else {
+                analysis += `<p>You demonstrate strong emotional awareness! To maintain and enhance your skills:</p>
+                    <ul class="list-disc pl-6 mt-2">
+                        <li>Share your insights with others</li>
+                        <li>Mentor others in emotional awareness</li>
+                        <li>Continue regular practice</li>
+                    </ul>`;
+            }
+
+            analysis += `</div>`;
+            return analysis;
         }
 
         // Generate and Download PDF
@@ -321,73 +333,28 @@
             
             // Add title
             doc.setFontSize(24);
-            doc.setTextColor(0, 51, 102); // Dark blue color for title
+            doc.setTextColor(0, 51, 102);
             doc.text('Emotional Awareness Assessment Results', 20, 20);
             
             // Add date
             doc.setFontSize(12);
-            doc.setTextColor(0, 0, 0); // Black color for regular text
+            doc.setTextColor(0, 0, 0);
             doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 30);
             
-            // Add scores
-            doc.setFontSize(16);
-            doc.setTextColor(0, 51, 102); // Dark blue color for heading
-            doc.text('Your Scores:', 20, 45);
-            
-            let yPos = 55;
-            Object.entries(window.quizResults.results).forEach(([category, score]) => {
-                doc.setFontSize(12);
-                doc.setTextColor(0, 0, 0); // Black color for regular text
-                doc.text(`${category}: ${score}%`, 30, yPos);
-                
-                // Draw progress bar
-                const barWidth = 100;
-                const barHeight = 8;
-                const barX = 90;
-                const barY = yPos - 4;
-                
-                // Background bar
-                doc.setFillColor(35, 54, 34);
-                doc.rect(barX, barY, barWidth, barHeight, 'F');
-                
-                // Score bar
-                doc.setFillColor(88, 166, 255);
-                doc.rect(barX, barY, (score / 100) * barWidth, barHeight, 'F');
-                
-                yPos += 15;
-            });
-            
             // Add analysis
-            yPos += 10;
-            doc.setFontSize(16);
-            doc.setTextColor(0, 51, 102); // Dark blue color for heading
-            doc.text('Analysis:', 20, yPos);
-            
-            // Convert HTML analysis to plain text
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = window.quizResults.analysis;
-            const analysisText = tempDiv.textContent;
-            
-            // Split analysis into lines and add to PDF
             doc.setFontSize(12);
-            doc.setTextColor(0, 0, 0); // Black color for regular text
-            const splitText = doc.splitTextToSize(analysisText, 170);
-            doc.text(splitText, 20, yPos + 10);
-            
-            // Add average score
-            yPos += splitText.length * 7 + 20;
-            doc.setFontSize(14);
-            doc.setTextColor(0, 51, 102); // Dark blue color for heading
-            doc.text(`Overall Average Score: ${Math.round(window.quizResults.averageScore)}%`, 20, yPos);
+            doc.setTextColor(0, 0, 0);
+            const splitText = doc.splitTextToSize(window.quizResults.analysis, 170);
+            doc.text(splitText, 20, 40);
             
             // Save the PDF
             doc.save('emotional-awareness-results.pdf');
         });
 
         // Handle Form Submission
-        document.getElementById('emotional-awareness-quiz').addEventListener('submit', (e) => {
+        document.getElementById('emotional-awareness-quiz').addEventListener('submit', function(e) {
             e.preventDefault();
-            const formData = new FormData(e.target);
+            const formData = new FormData(this);
             const results = calculateResults(formData);
             displayResults(results);
         });
