@@ -341,11 +341,61 @@
             doc.setTextColor(0, 0, 0);
             doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 30);
             
-            // Add analysis
-            doc.setFontSize(12);
+            // Add overall score
+            doc.setFontSize(16);
             doc.setTextColor(0, 0, 0);
-            const splitText = doc.splitTextToSize(window.quizResults.analysis, 170);
-            doc.text(splitText, 20, 40);
+            const overallScore = Math.round(window.quizResults.results.averageScore * 25);
+            doc.text(`Overall Score: ${overallScore}/100`, 20, 45);
+            
+            // Add category scores
+            doc.setFontSize(14);
+            doc.text('Category Analysis:', 20, 60);
+            
+            let yPosition = 70;
+            Object.entries(window.quizResults.results.categories).forEach(([category, data]) => {
+                const score = Math.round(data.average * 25);
+                doc.setFontSize(12);
+                doc.text(`${category}: ${score}/100`, 30, yPosition);
+                yPosition += 10;
+            });
+            
+            // Add recommendations
+            yPosition += 10;
+            doc.setFontSize(14);
+            doc.text('Recommendations:', 20, yPosition);
+            
+            yPosition += 10;
+            doc.setFontSize(12);
+            
+            // Add recommendations based on score
+            let recommendations = [];
+            if (overallScore < 50) {
+                recommendations = [
+                    'Your emotional awareness could benefit from regular practice. Consider:',
+                    '• Daily mindfulness meditation',
+                    '• Journaling your emotions',
+                    '• Practicing emotional labeling'
+                ];
+            } else if (overallScore < 75) {
+                recommendations = [
+                    'You have a good foundation in emotional awareness. To improve further:',
+                    '• Regular self-reflection',
+                    '• Seeking feedback from others',
+                    '• Practicing active listening'
+                ];
+            } else {
+                recommendations = [
+                    'You demonstrate strong emotional awareness! To maintain and enhance your skills:',
+                    '• Share your insights with others',
+                    '• Mentor others in emotional awareness',
+                    '• Continue regular practice'
+                ];
+            }
+            
+            recommendations.forEach(rec => {
+                doc.text(rec, 30, yPosition);
+                yPosition += 10;
+            });
             
             // Save the PDF
             doc.save('emotional-awareness-results.pdf');
