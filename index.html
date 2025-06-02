@@ -32,8 +32,13 @@
 
     <main>
         <!-- Hero Section -->
-        <section id="home" class="pt-32 pb-20 bg-gradient-to-r from-[#161B22] to-[#0D1117] text-[#C9D1D9]">
-            <div class="max-w-7xl mx-auto px-4">
+        <section id="home" class="pt-32 pb-20 relative text-[#C9D1D9]">
+            <div class="absolute inset-0 z-0">
+                <img src="https://th.bing.com/th/id/OIP.rQdCIuyQKJw3DFxhNRVsRAHaEL?rs=1&pid=ImgDetMain" 
+                     class="w-full h-full object-cover blur-[0.2px] object-[center_30%]">
+                <div class="absolute inset-0 bg-gradient-to-r from-[#161B22]/60 to-[#0D1117]/60"></div>
+            </div>
+            <div class="max-w-7xl mx-auto px-4 relative z-10">
                 <div class="grid md:grid-cols-2 gap-12 items-center">
                     <div>
                         <h2 class="text-4xl md:text-5xl font-bold mb-6 text-[#C9D1D9]">Emotional Intelligence & Goal Achievement</h2>
@@ -41,10 +46,6 @@
                         <a href="#resources" class="inline-block px-8 py-4 bg-[#58A6FF] text-[#0D1117] font-semibold rounded-lg hover:bg-[#238636] hover:text-[#C9D1D9] transition-colors">
                             Explore Resources
                         </a>
-                    </div>
-                    <div class="hidden md:block">
-                        <img src="https://th.bing.com/th/id/OIP.rQdCIuyQKJw3DFxhNRVsRAHaEL?rs=1&pid=ImgDetMain" 
-                             class="w-full h-auto object-contain mix-blend-normal">
                     </div>
                 </div>
             </div>
