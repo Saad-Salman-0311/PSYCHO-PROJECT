@@ -350,8 +350,12 @@
                     });
 
                     return `
-                        <h4 class="text-2xl font-bold mt-8 mb-4 text-[#58A6FF]">${heading}</h4>
-                        ${processedLines.join('\n')}
+                        <div class="mb-8">
+                            <h4 class="text-2xl font-bold mb-4 text-[#58A6FF]">${heading}</h4>
+                            <div class="pl-4">
+                                ${processedLines.join('\n')}
+                            </div>
+                        </div>
                     `;
                 });
             });
@@ -425,6 +429,39 @@
                     const splitText = doc.splitTextToSize(element.textContent, 170);
                     doc.text(splitText, margin, yPosition);
                     yPosition += (splitText.length * lineHeight);
+                } else if (element.tagName === 'DIV') {
+                    // Handle nested content
+                    const nestedElements = element.children;
+                    for (let nestedElement of nestedElements) {
+                        if (nestedElement.tagName === 'H4') {
+                            // Format main headings
+                            doc.setFontSize(18);
+                            doc.setTextColor(0, 51, 102);
+                            doc.text(nestedElement.textContent, margin, yPosition);
+                            yPosition += headingHeight;
+                        } else if (nestedElement.tagName === 'DIV') {
+                            // Handle content div
+                            const contentElements = nestedElement.children;
+                            for (let contentElement of contentElements) {
+                                if (contentElement.tagName === 'LI') {
+                                    // Format bullet points
+                                    doc.setFontSize(12);
+                                    doc.setTextColor(0, 0, 0);
+                                    const bulletPoint = '• ' + contentElement.textContent;
+                                    const splitText = doc.splitTextToSize(bulletPoint, 170);
+                                    doc.text(splitText, margin + 5, yPosition);
+                                    yPosition += (splitText.length * lineHeight);
+                                } else if (contentElement.tagName === 'P') {
+                                    // Format paragraphs
+                                    doc.setFontSize(12);
+                                    doc.setTextColor(0, 0, 0);
+                                    const splitText = doc.splitTextToSize(contentElement.textContent, 170);
+                                    doc.text(splitText, margin, yPosition);
+                                    yPosition += (splitText.length * lineHeight);
+                                }
+                            }
+                        }
+                    }
                 }
             }
             

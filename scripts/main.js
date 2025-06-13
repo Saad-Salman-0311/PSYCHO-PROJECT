@@ -42,16 +42,16 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // Case Studies Data
 const caseStudies = [
     {
-        title: " Emotional Intelligence as a Predictor of Self-Efficacy Among Students with Different Levels of Academic Achievement",
-        description: "A case study exploring how emotional intelligence training improved academic performance in university students.",
-        image: "https://mars-images.imgix.net/seobot/allgpts.co/6571328cebfc152d51ae2e56-00483b5ec7dfb1299d6229cfaaa8f8b4.png?auto=compressimage.png",
-        link: "https://pubmed.ncbi.nlm.nih.gov/25927067/"
+        title: "Emotional Intelligence and Soft Skills: A Case Study on Information Professionals",
+        description: " Examines how enhanced EI skills improve communication, self-regulation, and motivation in information professionals.",
+        image: "https://th.bing.com/th/id/OIP.NfeyXrblNo0v8Iav0nyYigHaEJ?w=293&h=180&c=7&r=0&o=7&cb=thvnextc1&pid=1.7&rm=3",
+        link: "https://scholarworks.waldenu.edu/cgi/viewcontent.cgi?article=15127&context=dissertations&utm_source=chatgpt.com"
     },
     {
-        title: "Emotional Intelligence and Learning Motivation Among College Students During the COVID-19 Pandemic: A Serial Mediation Model",
-        description: "How understanding emotional patterns helped young professionals achieve their career goals.",
-        image: "https://th.bing.com/th/id/R.cc2d14f1248ba16061d6bf3c2c8431ef?rik=yRT%2f7jaALpBMRQ&pid=ImgRaw&r=0",
-        link: "https://pubmed.ncbi.nlm.nih.gov/37008860/"
+        title: "Emotionally Intelligent Learner Leadership Development: A Student Case Study (South Africa, 2014",
+        description: "Profiles how secondary‑school student leaders developed EI leadership competencies via assessment and training.",
+        image: "https://th.bing.com/th/id/OIP.0AirAZW5RcNzhSS2FjvDuAHaEK?w=292&h=180&c=7&r=0&o=7&cb=thvnextc1&pid=1.7&rm=3",
+        link: "https://files.eric.ed.gov/fulltext/EJ1136438.pdf"
     },
     {
         title: "The Role of Emotional Intelligence in Mediating the Relationship Between Emerging Adulthood and Academic Achievement",
