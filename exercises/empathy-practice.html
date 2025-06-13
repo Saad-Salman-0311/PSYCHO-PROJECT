@@ -263,25 +263,21 @@
                    - Brief explanation of what Empathy is.
                    - Mention that this analysis is based on a 10-question quiz response.
 
-                2. Empathy Practice Assessment
-                   - A summary of the respondent's level of empathy practice (e.g., highly empathetic, moderately empathetic, needs improvement).
-                   - Highlight key patterns or behaviors indicated by their answers.
-
                 3. Strengths
-                   - Bullet points summarizing areas where the respondent demonstrates strong empathy practices.
-                   - Include examples like: active listening, emotional recognition, compassionate response, etc.
+                   - Bullet points summarizing areas where the respondent demonstrates strong empathy.
+                   - Include examples like: active listening, perspective-taking, emotional understanding, etc.
 
                 4. Areas for Improvement
-                   - Bullet points where the respondent may struggle (e.g., difficulty understanding others' perspectives, challenges in emotional support, etc.).
+                   - Bullet points where the respondent may struggle (e.g., difficulty understanding others' perspectives, challenges in emotional connection, etc.).
                    - Keep feedback constructive and respectful.
 
                 5. Recommendations
                    - Short list of practical strategies or exercises to improve empathy.
-                   - Example: perspective-taking exercises, active listening practice, emotional validation techniques, etc.
+                   - Example: perspective-taking exercises, active listening practice, reading fiction, etc.
 
                 6. Conclusion
                    - Encouraging closing statement reinforcing the importance of empathy.
-                   - Optional motivational sentence about how building empathy improves relationships and social connections.
+                   - Optional motivational sentence about how building empathy improves relationships and understanding.
 
                 Use simple, professional, and empathetic language. Avoid psychological jargon. Make the analysis feel personalized, warm, and helpful — as if written by a caring psychologist.
             `;
@@ -332,35 +328,45 @@
             // Format the 6 main headings
             const mainHeadings = [
                 '1. Introduction',
-                '2. Empathy Practice Assessment',
                 '3. Strengths',
                 '4. Areas for Improvement',
                 '5. Recommendations',
                 '6. Conclusion'
             ];
 
-            mainHeadings.forEach(heading => {
-                const regex = new RegExp(`${heading}([^]*?)(?=${mainHeadings.join('|')}|$)`, 'g');
-                formattedResponse = formattedResponse.replace(regex, (match, content) => {
-                    // Split content into lines and process each line
+            // First, split the response into sections
+            let sections = formattedResponse.split(/(?=\d\.\s)/);
+            
+            // Process each section
+            formattedResponse = sections.map(section => {
+                // Find the heading
+                const headingMatch = section.match(/^(\d\.\s.*?)(?=\n|$)/);
+                if (headingMatch) {
+                    const heading = headingMatch[1].trim();
+                    const content = section.substring(headingMatch[0].length).trim();
+                    
+                    // Process the content
                     const lines = content.split('\n').filter(line => line.trim());
                     const processedLines = lines.map(line => {
                         if (line.trim().startsWith('-')) {
-                            // Convert bullet points
                             return `<li class="ml-6 mb-2">${line.trim().substring(1).trim()}</li>`;
                         } else {
-                            // Keep as paragraph
                             return `<p class="mb-4">${line.trim()}</p>`;
                         }
                     });
 
                     return `
-                        <h4 class="text-2xl font-bold mt-8 mb-4 text-[#58A6FF]">${heading}</h4>
-                        ${processedLines.join('\n')}
+                        <div class="mb-8">
+                            <h4 class="text-2xl font-bold mb-4 text-[#58A6FF]">${heading}</h4>
+                            <div class="pl-4">
+                                ${processedLines.join('\n')}
+                            </div>
+                        </div>
                     `;
-                });
-            });
-            
+                }
+                return section;
+            }).join('');
+
             geminiAnalysis.innerHTML = `<div class="prose prose-invert max-w-none">${formattedResponse}</div>`;
 
             // Store results for PDF generation
@@ -409,27 +415,41 @@
                     yPosition = 20;
                 }
                 
-                if (element.tagName === 'H4') {
-                    // Format main headings
-                    doc.setFontSize(18);
-                    doc.setTextColor(0, 51, 102);
-                    doc.text(element.textContent, margin, yPosition);
-                    yPosition += headingHeight;
-                } else if (element.tagName === 'LI') {
-                    // Format bullet points
-                    doc.setFontSize(12);
-                    doc.setTextColor(0, 0, 0);
-                    const bulletPoint = '• ' + element.textContent;
-                    const splitText = doc.splitTextToSize(bulletPoint, 170);
-                    doc.text(splitText, margin + 5, yPosition);
-                    yPosition += (splitText.length * lineHeight);
-                } else if (element.tagName === 'P') {
-                    // Format paragraphs
-                    doc.setFontSize(12);
-                    doc.setTextColor(0, 0, 0);
-                    const splitText = doc.splitTextToSize(element.textContent, 170);
-                    doc.text(splitText, margin, yPosition);
-                    yPosition += (splitText.length * lineHeight);
+                if (element.tagName === 'DIV') {
+                    // Handle section div
+                    const heading = element.querySelector('h4');
+                    const contentDiv = element.querySelector('div');
+                    
+                    if (heading) {
+                        // Format main headings
+                        doc.setFontSize(18);
+                        doc.setTextColor(0, 51, 102);
+                        doc.text(heading.textContent, margin, yPosition);
+                        yPosition += headingHeight;
+                    }
+                    
+                    if (contentDiv) {
+                        // Process content div elements
+                        const contentElements = contentDiv.children;
+                        for (let contentElement of contentElements) {
+                            if (contentElement.tagName === 'LI') {
+                                // Format bullet points
+                                doc.setFontSize(12);
+                                doc.setTextColor(0, 0, 0);
+                                const bulletPoint = '• ' + contentElement.textContent;
+                                const splitText = doc.splitTextToSize(bulletPoint, 170);
+                                doc.text(splitText, margin + 5, yPosition);
+                                yPosition += (splitText.length * lineHeight);
+                            } else if (contentElement.tagName === 'P') {
+                                // Format paragraphs
+                                doc.setFontSize(12);
+                                doc.setTextColor(0, 0, 0);
+                                const splitText = doc.splitTextToSize(contentElement.textContent, 170);
+                                doc.text(splitText, margin, yPosition);
+                                yPosition += (splitText.length * lineHeight);
+                            }
+                        }
+                    }
                 }
             }
             

@@ -225,9 +225,9 @@
         // Call Gemini API
         async function callGeminiAPI(answers) {
             const prompt = `
-                You are a professional psychologist specializing in Stress Management and Mental Health.
+                You are a professional psychologist specializing in Stress Management, with a particular focus on helping individuals develop effective coping strategies and maintain work-life balance.
 
-                You have received answers to a 10-question multiple-choice quiz specifically designed to assess a person's Stress Management skills.
+                You have received answers to a 10-question multiple-choice quiz specifically designed to assess a person's Stress Management abilities.
 
                 Here are the questions and the user's answers:
 
@@ -237,7 +237,7 @@
                     Category: ${q.category}
                 `).join('\n')}
 
-                Based on these answers, provide a concise, insightful, and professional psychological analysis focusing on the respondent's stress management abilities.
+                Based on these answers, provide a concise, insightful, and professional psychological analysis focusing only on the respondent's stress management abilities.
 
                 Structure your response using the following format:
 
@@ -245,21 +245,17 @@
                    - Brief explanation of what Stress Management is.
                    - Mention that this analysis is based on a 10-question quiz response.
 
-                2. Stress Management Assessment
-                   - A summary of the respondent's level of stress management (e.g., highly effective, moderately effective, needs improvement).
-                   - Highlight key patterns or behaviors indicated by their answers.
-
                 3. Strengths
-                   - Bullet points summarizing areas where the respondent demonstrates strong stress management practices.
-                   - Include examples like: time management, work-life balance, coping strategies, etc.
+                   - Bullet points summarizing areas where the respondent demonstrates strong stress management.
+                   - Include examples like: healthy coping strategies, work-life balance, relaxation techniques, etc.
 
                 4. Areas for Improvement
-                   - Bullet points where the respondent may struggle (e.g., sleep habits, physical symptoms, communication, etc.).
+                   - Bullet points where the respondent may struggle (e.g., difficulty managing time, challenges in relaxation, etc.).
                    - Keep feedback constructive and respectful.
 
                 5. Recommendations
                    - Short list of practical strategies or exercises to improve stress management.
-                   - Example: mindfulness techniques, exercise routines, sleep hygiene, time management tools, etc.
+                   - Example: mindfulness exercises, time management techniques, relaxation methods, etc.
 
                 6. Conclusion
                    - Encouraging closing statement reinforcing the importance of stress management.
@@ -283,11 +279,20 @@
                     })
                 });
 
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const data = await response.json();
+                
+                if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts || !data.candidates[0].content.parts[0]) {
+                    throw new Error('Invalid response format from API');
+                }
+
                 return data.candidates[0].content.parts[0].text;
             } catch (error) {
                 console.error('Error calling Gemini API:', error);
-                return 'Unable to generate professional analysis at this time.';
+                return 'Unable to generate professional analysis at this time. Please try again later.';
             }
         }
 
@@ -295,61 +300,68 @@
         async function displayResults(results) {
             const quizContainer = document.getElementById('quiz-container');
             const resultsContainer = document.getElementById('results-container');
-            const loadingAnimation = document.getElementById('loading-animation');
             
             quizContainer.classList.add('hidden');
             resultsContainer.classList.remove('hidden');
-            loadingAnimation.classList.remove('hidden');
 
             // Get Gemini Analysis
             const geminiAnalysis = document.getElementById('analysis-text');
-            const geminiResponse = await callGeminiAPI(results.answers);
+            geminiAnalysis.innerHTML = '<div class="animate-pulse"><div class="h-4 bg-[#58A6FF]/20 rounded w-3/4 mb-4"></div><div class="h-4 bg-[#58A6FF]/20 rounded w-1/2"></div></div>';
             
-            // Hide loading animation
-            loadingAnimation.classList.add('hidden');
-            
-            // Remove all asterisks from the response
-            let formattedResponse = geminiResponse.replace(/\*/g, '');
-            
-            // Format the 6 main headings
-            const mainHeadings = [
-                '1. Introduction',
-                '2. Stress Management Assessment',
-                '3. Strengths',
-                '4. Areas for Improvement',
-                '5. Recommendations',
-                '6. Conclusion'
-            ];
+            try {
+                const geminiResponse = await callGeminiAPI(results.answers);
+                
+                if (geminiResponse === 'Unable to generate professional analysis at this time. Please try again later.') {
+                    throw new Error('API call failed');
+                }
+                
+                // Remove all asterisks from the response
+                let formattedResponse = geminiResponse.replace(/\*/g, '');
+                
+                // First, split the response into sections
+                let sections = formattedResponse.split(/(?=\d\.\s)/);
+                
+                // Process each section
+                formattedResponse = sections.map(section => {
+                    // Find the heading
+                    const headingMatch = section.match(/^(\d\.\s.*?)(?=\n|$)/);
+                    if (headingMatch) {
+                        const heading = headingMatch[1].trim();
+                        const content = section.substring(headingMatch[0].length).trim();
+                        
+                        // Process the content
+                        const lines = content.split('\n').filter(line => line.trim());
+                        const processedLines = lines.map(line => {
+                            if (line.trim().startsWith('-')) {
+                                return `<li class="ml-6 mb-2">${line.trim().substring(1).trim()}</li>`;
+                            } else {
+                                return `<p class="mb-4">${line.trim()}</p>`;
+                            }
+                        });
 
-            mainHeadings.forEach(heading => {
-                const regex = new RegExp(`${heading}([^]*?)(?=${mainHeadings.join('|')}|$)`, 'g');
-                formattedResponse = formattedResponse.replace(regex, (match, content) => {
-                    // Split content into lines and process each line
-                    const lines = content.split('\n').filter(line => line.trim());
-                    const processedLines = lines.map(line => {
-                        if (line.trim().startsWith('-')) {
-                            // Convert bullet points
-                            return `<li class="ml-6 mb-2">${line.trim().substring(1).trim()}</li>`;
-                        } else {
-                            // Keep as paragraph
-                            return `<p class="mb-4">${line.trim()}</p>`;
-                        }
-                    });
+                        return `
+                            <div class="mb-8">
+                                <h4 class="text-2xl font-bold mb-4 text-[#58A6FF]">${heading}</h4>
+                                <div class="pl-4">
+                                    ${processedLines.join('\n')}
+                                </div>
+                            </div>
+                        `;
+                    }
+                    return section;
+                }).join('');
 
-                    return `
-                        <h4 class="text-2xl font-bold mt-8 mb-4 text-[#58A6FF]">${heading}</h4>
-                        ${processedLines.join('\n')}
-                    `;
-                });
-            });
-            
-            geminiAnalysis.innerHTML = `<div class="prose prose-invert max-w-none">${formattedResponse}</div>`;
+                geminiAnalysis.innerHTML = `<div class="prose prose-invert max-w-none">${formattedResponse}</div>`;
 
-            // Store results for PDF generation
-            window.quizResults = {
-                results: results,
-                geminiAnalysis: formattedResponse
-            };
+                // Store results for PDF generation
+                window.quizResults = {
+                    results: results,
+                    geminiAnalysis: formattedResponse
+                };
+            } catch (error) {
+                console.error('Error displaying results:', error);
+                geminiAnalysis.innerHTML = '<div class="text-red-500">Unable to generate professional analysis at this time. Please try again later.</div>';
+            }
         }
 
         // Generate and Download PDF
@@ -391,27 +403,41 @@
                     yPosition = 20;
                 }
                 
-                if (element.tagName === 'H4') {
-                    // Format main headings
-                    doc.setFontSize(18);
-                    doc.setTextColor(0, 51, 102);
-                    doc.text(element.textContent, margin, yPosition);
-                    yPosition += headingHeight;
-                } else if (element.tagName === 'LI') {
-                    // Format bullet points
-                    doc.setFontSize(12);
-                    doc.setTextColor(0, 0, 0);
-                    const bulletPoint = '• ' + element.textContent;
-                    const splitText = doc.splitTextToSize(bulletPoint, 170);
-                    doc.text(splitText, margin + 5, yPosition);
-                    yPosition += (splitText.length * lineHeight);
-                } else if (element.tagName === 'P') {
-                    // Format paragraphs
-                    doc.setFontSize(12);
-                    doc.setTextColor(0, 0, 0);
-                    const splitText = doc.splitTextToSize(element.textContent, 170);
-                    doc.text(splitText, margin, yPosition);
-                    yPosition += (splitText.length * lineHeight);
+                if (element.tagName === 'DIV') {
+                    // Handle section div
+                    const heading = element.querySelector('h4');
+                    const contentDiv = element.querySelector('div');
+                    
+                    if (heading) {
+                        // Format main headings
+                        doc.setFontSize(18);
+                        doc.setTextColor(0, 51, 102);
+                        doc.text(heading.textContent, margin, yPosition);
+                        yPosition += headingHeight;
+                    }
+                    
+                    if (contentDiv) {
+                        // Process content div elements
+                        const contentElements = contentDiv.children;
+                        for (let contentElement of contentElements) {
+                            if (contentElement.tagName === 'LI') {
+                                // Format bullet points
+                                doc.setFontSize(12);
+                                doc.setTextColor(0, 0, 0);
+                                const bulletPoint = '• ' + contentElement.textContent;
+                                const splitText = doc.splitTextToSize(bulletPoint, 170);
+                                doc.text(splitText, margin + 5, yPosition);
+                                yPosition += (splitText.length * lineHeight);
+                            } else if (contentElement.tagName === 'P') {
+                                // Format paragraphs
+                                doc.setFontSize(12);
+                                doc.setTextColor(0, 0, 0);
+                                const splitText = doc.splitTextToSize(contentElement.textContent, 170);
+                                doc.text(splitText, margin, yPosition);
+                                yPosition += (splitText.length * lineHeight);
+                            }
+                        }
+                    }
                 }
             }
             

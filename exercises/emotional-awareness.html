@@ -263,10 +263,6 @@
                    - Brief explanation of what Emotional Awareness is.
                    - Mention that this analysis is based on a 10-question quiz response.
 
-                2. Emotional Awareness Assessment
-                   - A summary of the respondent's level of emotional awareness (e.g., highly aware, moderately aware, low awareness).
-                   - Highlight key patterns or behaviors indicated by their answers.
-
                 3. Strengths
                    - Bullet points summarizing areas where the respondent demonstrates strong emotional awareness.
                    - Include examples like: recognizing emotions accurately, articulating feelings, understanding emotional triggers, etc.
@@ -327,24 +323,29 @@
             // Format the 6 main headings
             const mainHeadings = [
                 '1. Introduction',
-                '2. Emotional Awareness Assessment',
                 '3. Strengths',
                 '4. Areas for Improvement',
                 '5. Recommendations',
                 '6. Conclusion'
             ];
 
-            mainHeadings.forEach(heading => {
-                const regex = new RegExp(`${heading}([^]*?)(?=${mainHeadings.join('|')}|$)`, 'g');
-                formattedResponse = formattedResponse.replace(regex, (match, content) => {
-                    // Split content into lines and process each line
+            // First, split the response into sections
+            let sections = formattedResponse.split(/(?=\d\.\s)/);
+            
+            // Process each section
+            formattedResponse = sections.map(section => {
+                // Find the heading
+                const headingMatch = section.match(/^(\d\.\s.*?)(?=\n|$)/);
+                if (headingMatch) {
+                    const heading = headingMatch[1].trim();
+                    const content = section.substring(headingMatch[0].length).trim();
+                    
+                    // Process the content
                     const lines = content.split('\n').filter(line => line.trim());
                     const processedLines = lines.map(line => {
                         if (line.trim().startsWith('-')) {
-                            // Convert bullet points
                             return `<li class="ml-6 mb-2">${line.trim().substring(1).trim()}</li>`;
                         } else {
-                            // Keep as paragraph
                             return `<p class="mb-4">${line.trim()}</p>`;
                         }
                     });
@@ -357,9 +358,10 @@
                             </div>
                         </div>
                     `;
-                });
-            });
-            
+                }
+                return section;
+            }).join('');
+
             geminiAnalysis.innerHTML = `<div class="prose prose-invert max-w-none">${formattedResponse}</div>`;
 
             // Store results for PDF generation
